@@ -8,6 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Box } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { authenticate } from './auth';
 
 export default function AuthDialog({
   onClose = () => {},
@@ -29,39 +30,11 @@ export default function AuthDialog({
     setAuthError(false);
   }, [username, password]);
 
-  const onLogIn = () => {
-    fetcher({
-      query: `
-        mutation authenticateByUsername($username: String!, $password: String!) {
-          authenticateByUsername(
-            input: {
-              data: {
-                username: $username,
-                password: $password
-              }
-            }
-          ) {
-            clientMutationId
-            result {
-              tokens {
-                refreshToken
-                token
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        username,
-        password,
-      },
-    }).then((result) => {
-      console.log(result.data);
-      console.log(result.errors);
-      if (result.errors?.[0]?.code === 'AuthenticationError') {
-        setAuthError(true);
-      }
-    });
+  const onLogIn = async () => {
+    const [success, error] = await authenticate(fetcher, username, password);
+    if (error === 'AuthenticationError') {
+      setAuthError(true);
+    }
   };
 
   return (
