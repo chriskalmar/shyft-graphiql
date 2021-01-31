@@ -1,65 +1,92 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
+import GraphiQL from 'graphiql';
+import { useEffect, useRef, useState } from 'react';
+import 'graphiql/graphiql.css';
+import GraphiQLExplorer from 'graphiql-explorer';
+import { buildClientSchema, getIntrospectionQuery } from 'graphql';
+
+const fetcher = (params) => {
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/graphql',
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    },
+  )
+    .then((response) => {
+      return response.text();
+    })
+    .then((body) => {
+      try {
+        return JSON.parse(body);
+      } catch (e) {
+        return body;
+      }
+    });
+};
 
 export default function Home() {
+  const graphiqlEl = useRef(null);
+
+  const [query, setQuery] = useState();
+  const [schema, setSchema] = useState(null);
+  const [explorerIsOpen, setExplorerIsOpen] = useState(true);
+
+  useEffect(() => {
+    fetcher({
+      query: getIntrospectionQuery(),
+    }).then((result) => {
+      const schema = buildClientSchema(result.data);
+      setSchema(schema);
+    });
+  }, []);
+
+  const toggleExplorerIsOpen = () => {
+    setExplorerIsOpen(!explorerIsOpen);
+  };
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+    <div className="graphiql-container">
+      <GraphiQLExplorer
+        schema={schema}
+        query={query}
+        onEdit={setQuery}
+        onRunOperation={(operationName) =>
+          graphiqlEl.current.handleRunQuery(operationName)
+        }
+        explorerIsOpen={explorerIsOpen}
+        onToggleExplorer={toggleExplorerIsOpen}
+      />
+      <GraphiQL
+        ref={graphiqlEl}
+        fetcher={fetcher}
+        schema={schema}
+        query={query}
+        onEditQuery={setQuery}
+      >
+        <GraphiQL.Toolbar>
+          <GraphiQL.Button
+            onClick={() => graphiqlEl.current.handlePrettifyQuery()}
+            label="Prettify"
+            title="Prettify Query (Shift-Ctrl-P)"
+          />
+          <GraphiQL.Button
+            onClick={() => graphiqlEl.current.handleToggleHistory()}
+            label="History"
+            title="Show History"
+          />
+          <GraphiQL.Button
+            onClick={toggleExplorerIsOpen}
+            label="Explorer"
+            title="Toggle Explorer"
+          />
+        </GraphiQL.Toolbar>
+      </GraphiQL>
     </div>
-  )
+  );
 }
