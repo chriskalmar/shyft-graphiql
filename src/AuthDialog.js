@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Box } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { authenticate } from './auth';
+import { authenticate, clearAuthentication } from './auth';
 
 export default function AuthDialog({
   onClose = () => {},
@@ -29,6 +29,11 @@ export default function AuthDialog({
   useEffect(() => {
     setAuthError(false);
   }, [username, password]);
+
+  const onClearAuth = () => {
+    clearAuthentication();
+    onClose();
+  };
 
   const onLogIn = async () => {
     const [success, error] = await authenticate(fetcher, username, password);
@@ -72,7 +77,7 @@ export default function AuthDialog({
         <Button onClick={onClose} variant="outlined" color="primary">
           Cancel
         </Button>
-        <Button onClick={onClose} variant="outlined" color="secondary">
+        <Button onClick={onClearAuth} variant="outlined" color="secondary">
           Clear Authentication
         </Button>
         <Button onClick={onLogIn} variant="contained" color="primary">
