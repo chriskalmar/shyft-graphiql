@@ -14,3 +14,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.graphiql-container {
+  height: 100vh !important;
+  width: 100vw !important;
+}
+
