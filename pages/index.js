@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import 'graphiql/graphiql.css';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery } from 'graphql';
+import AuthDialog from '../src/AuthDialog';
 
 const fetcher = (params) => {
   return fetch(
@@ -36,6 +37,7 @@ export default function Home() {
   const [query, setQuery] = useState();
   const [schema, setSchema] = useState(null);
   const [explorerIsOpen, setExplorerIsOpen] = useState(true);
+  const [authIsOpen, setAuthIsOpen] = useState(false);
 
   useEffect(() => {
     fetcher({
@@ -93,8 +95,14 @@ export default function Home() {
             label="Explorer"
             title="Toggle Explorer"
           />
+          <GraphiQL.Button
+            onClick={() => setAuthIsOpen(true)}
+            label="Authentication"
+            title="Show Authentication Dialog"
+          />
         </GraphiQL.Toolbar>
       </GraphiQL>
+      <AuthDialog isOpen={authIsOpen} onClose={() => setAuthIsOpen(false)} />
     </div>
   );
 }
