@@ -18,6 +18,7 @@ export default function AuthDialog({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState(false);
+  const [validInput, setValidInput] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -28,6 +29,7 @@ export default function AuthDialog({
 
   useEffect(() => {
     setAuthError(false);
+    setValidInput(username.length && password.length);
   }, [username, password]);
 
   const onClearAuth = () => {
@@ -60,7 +62,6 @@ export default function AuthDialog({
           </Box>
           <Box mb={2}>
             <TextField
-              autoFocus
               id="password"
               label="Password"
               type="password"
@@ -80,7 +81,12 @@ export default function AuthDialog({
         <Button onClick={onClearAuth} variant="outlined" color="secondary">
           Clear Authentication
         </Button>
-        <Button onClick={onLogIn} variant="contained" color="primary">
+        <Button
+          onClick={onLogIn}
+          variant="contained"
+          color="primary"
+          disabled={!validInput}
+        >
           Log in
         </Button>
       </DialogActions>
