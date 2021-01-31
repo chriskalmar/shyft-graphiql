@@ -52,6 +52,13 @@ export default function Home() {
 
   return (
     <div className="graphiql-container">
+      <Head>
+        <title>Shyft GraphiQL</title>
+        {/* <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/theme/dracula.css"
+        /> */}
+      </Head>
       <GraphiQLExplorer
         schema={schema}
         query={query}
@@ -68,6 +75,7 @@ export default function Home() {
         schema={schema}
         query={query}
         onEditQuery={setQuery}
+        // editorTheme={'dracula'}
       >
         <GraphiQL.Toolbar>
           <GraphiQL.Button
