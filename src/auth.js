@@ -41,23 +41,29 @@ export const authenticate = async (fetcher, username, password) => {
       password,
     },
     authMode: false,
-  }).then((result) => {
-    if (result.errors?.[0]?.code === 'AuthenticationError') {
-      error = 'AuthenticationError';
-    } else {
-      const token = result.data?.authenticateByUsername?.result?.tokens?.token;
-      const refreshToken =
-        result.data?.authenticateByUsername?.result?.tokens?.refreshToken;
+  })
+    .then((result) => {
+      if (result.errors?.[0]?.code === 'AuthenticationError') {
+        error = 'AuthenticationError';
+      } else {
+        const token =
+          result.data?.authenticateByUsername?.result?.tokens?.token;
+        const refreshToken =
+          result.data?.authenticateByUsername?.result?.tokens?.refreshToken;
 
-      if (token && refreshToken) {
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem('token', token);
-          window.localStorage.setItem('refreshToken', refreshToken);
-          success = true;
+        if (token && refreshToken) {
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem('token', token);
+            window.localStorage.setItem('refreshToken', refreshToken);
+            success = true;
+          }
         }
       }
-    }
 
-    return [success, error];
-  });
+      return [success, error];
+    })
+    .catch((err) => {
+      console.error(err);
+      return [success, 'NetworkError'];
+    });
 };

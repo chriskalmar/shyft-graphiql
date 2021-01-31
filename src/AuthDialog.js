@@ -18,6 +18,7 @@ export default function AuthDialog({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState(false);
+  const [connectionWarning, setConnectionWarning] = useState(false);
   const [validInput, setValidInput] = useState(false);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function AuthDialog({
 
   useEffect(() => {
     setAuthError(false);
+    setConnectionWarning(false);
     setValidInput(username.length && password.length);
   }, [username, password]);
 
@@ -38,11 +40,19 @@ export default function AuthDialog({
   };
 
   const onLogIn = async () => {
-    const [success, error] = await authenticate(fetcher, username, password);
-    if (error === 'AuthenticationError') {
-      setAuthError(true);
-    } else {
-      onClose();
+    try {
+      const [success, error] = await authenticate(fetcher, username, password);
+
+      if (error === 'AuthenticationError') {
+        setAuthError(true);
+      } else if (!success) {
+        setConnectionWarning(true);
+      } else {
+        onClose();
+      }
+    } catch (err) {
+      console.error(err);
+      setConnectionWarning(true);
     }
   };
 
@@ -73,7 +83,10 @@ export default function AuthDialog({
             />
           </Box>
           {authError && <Alert severity="error">Authentication failed!</Alert>}
-          {!authError && <Box p={3} />}
+          {connectionWarning && (
+            <Alert severity="warning">Connection failed!</Alert>
+          )}
+          {!authError && !connectionWarning && <Box p={3} />}
         </from>
       </DialogContent>
       <DialogActions>
