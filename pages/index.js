@@ -102,7 +102,11 @@ export default function Home() {
           />
         </GraphiQL.Toolbar>
       </GraphiQL>
-      <AuthDialog isOpen={authIsOpen} onClose={() => setAuthIsOpen(false)} />
+      <AuthDialog
+        isOpen={authIsOpen}
+        onClose={() => setAuthIsOpen(false)}
+        fetcher={fetcher}
+      />
     </div>
   );
 }
