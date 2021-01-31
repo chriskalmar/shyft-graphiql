@@ -5,35 +5,42 @@ export const clearAuthentication = () => {
   }
 };
 
+export const getToken = () => {
+  if (typeof window !== 'undefined') {
+    return window.localStorage.getItem('token');
+  }
+};
+
 export const authenticate = async (fetcher, username, password) => {
   let success = false;
   let error;
 
   return fetcher({
     query: `
-      mutation authenticateByUsername($username: String!, $password: String!) {
-        authenticateByUsername(
-          input: {
-            data: {
-              username: $username,
-              password: $password
+        mutation authenticateByUsername($username: String!, $password: String!) {
+          authenticateByUsername(
+            input: {
+              data: {
+                username: $username,
+                password: $password
+              }
             }
-          }
-        ) {
-          clientMutationId
-          result {
-            tokens {
-              refreshToken
-              token
+          ) {
+            clientMutationId
+            result {
+              tokens {
+                refreshToken
+                token
+              }
             }
           }
         }
-      }
-    `,
+      `,
     variables: {
       username,
       password,
     },
+    authMode: false,
   }).then((result) => {
     if (result.errors?.[0]?.code === 'AuthenticationError') {
       error = 'AuthenticationError';

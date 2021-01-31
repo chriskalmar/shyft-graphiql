@@ -41,6 +41,8 @@ export default function AuthDialog({
     const [success, error] = await authenticate(fetcher, username, password);
     if (error === 'AuthenticationError') {
       setAuthError(true);
+    } else {
+      onClose();
     }
   };
 
