@@ -57,6 +57,14 @@ export default function AuthDialog({
     }
   };
 
+  const onKeyUp = (event) => {
+    if (event.charCode === 13) {
+      if (validInput) {
+        onLogIn();
+      }
+    }
+  };
+
   return (
     <Dialog open={isOpen} onClose={onClose} aria-labelledby="auth-dialog-title">
       <DialogTitle id="auth-dialog-title">Authentication</DialogTitle>
@@ -71,6 +79,7 @@ export default function AuthDialog({
               variant="outlined"
               fullWidth
               onChange={(event) => setUsername(event.target.value)}
+              onKeyPress={onKeyUp}
             />
           </Box>
           <Box mb={2}>
@@ -81,6 +90,7 @@ export default function AuthDialog({
               variant="outlined"
               fullWidth
               onChange={(event) => setPassword(event.target.value)}
+              onKeyPress={onKeyUp}
             />
           </Box>
           {authError && <Alert severity="error">Authentication failed!</Alert>}
