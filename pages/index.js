@@ -17,7 +17,7 @@ export default function Home() {
   const [explorerIsOpen, setExplorerIsOpen] = useState(true);
   const [authIsOpen, setAuthIsOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchSchema = () => {
     fetcher({
       query: getIntrospectionQuery(),
     }).then((result) => {
@@ -26,7 +26,9 @@ export default function Home() {
         setSchema(schema);
       }
     });
-  }, []);
+  };
+
+  useEffect(() => fetchSchema, []);
 
   const toggleExplorerIsOpen = () => {
     setExplorerIsOpen(!explorerIsOpen);
@@ -79,6 +81,11 @@ export default function Home() {
             onClick={() => setAuthIsOpen(true)}
             label="Authentication"
             title="Show Authentication Dialog"
+          />
+          <GraphiQL.Button
+            onClick={() => fetchSchema()}
+            label="Refetch Schema"
+            title="Refetch Schema"
           />
         </GraphiQL.Toolbar>
       </GraphiQL>
