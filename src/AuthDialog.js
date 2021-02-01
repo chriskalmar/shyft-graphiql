@@ -41,6 +41,7 @@ export default function AuthDialog({
 
   const onLogIn = async () => {
     try {
+      onClearAuth();
       const [success, error] = await authenticate(fetcher, username, password);
 
       if (error === 'AuthenticationError') {
