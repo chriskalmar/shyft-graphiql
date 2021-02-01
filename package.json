@@ -1,7 +1,9 @@
 {
   "name": "shyft-graphiql",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "author": "Chris Kalmar <christian.kalmar@gmail.com>",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev -p 3010",
     "build": "next build",
