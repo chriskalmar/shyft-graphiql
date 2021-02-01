@@ -50,8 +50,10 @@ export default function Home() {
     fetcher({
       query: getIntrospectionQuery(),
     }).then((result) => {
-      const schema = buildClientSchema(result.data);
-      setSchema(schema);
+      if (result?.data) {
+        const schema = buildClientSchema(result.data);
+        setSchema(schema);
+      }
     });
   }, []);
 
