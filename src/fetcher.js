@@ -1,8 +1,11 @@
+import getConfig from 'next/config';
 import axios from 'axios';
 import { getToken, refreshToken } from './auth';
 
+const { publicRuntimeConfig } = getConfig();
+
 export const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/graphql',
+  baseURL: publicRuntimeConfig.API_ENDPOINT || 'http://localhost:4000/graphql',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',

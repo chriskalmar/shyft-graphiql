@@ -8,6 +8,9 @@ import { buildClientSchema, getIntrospectionQuery } from 'graphql';
 import AuthDialog from '../src/AuthDialog';
 import { getToken } from '../src/auth';
 import { fetcher } from '../src/fetcher';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig, serverRuntimeConfig } = getConfig();
 
 export default function Home() {
   const graphiqlEl = useRef(null);
@@ -97,3 +100,9 @@ export default function Home() {
     </div>
   );
 }
+
+export const getServerSideProps = () => {
+  return {
+    props: {},
+  };
+};
