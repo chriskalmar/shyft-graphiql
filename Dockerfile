@@ -1,4 +1,4 @@
-FROM node:12.20.1-alpine3.12
+FROM node:12.22.8-alpine3.12
 
 LABEL maintainer="Chris Kalmar <christian.kalmar@gmail.com>"
 
